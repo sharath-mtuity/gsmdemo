@@ -83,7 +83,7 @@ class ElementzGSMshield {
     String readFromtheBeginningOftheFile(const char *fileNameWithPath, uint16_t sizeTobeRead, uint8_t linesTobeRead);
     String readFromposition(const char *fileNameWithPath, uint16_t sizeTobeRead, uint16_t position, uint8_t linesTobeRead);
     uint16_t getFileSize(const char *fileNameWithPath);
-
+    boolean checkNetworkStatus();
 
   private:
     boolean setupEmailFromAddress(String mailId, String Name);

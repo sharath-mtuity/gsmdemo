@@ -3,7 +3,7 @@
 #include "ElementzGSM.h"
 
 
-ElementzGSMshield::ElementzGSMshield(SoftwareSerial *serialInput)
+ElementzGSMshield::ElementzGSMshield (SoftwareSerial *serialInput)
 {
   gsmSerial =  serialInput;
   mySerial =  gsmSerial;
@@ -20,6 +20,24 @@ static void serialFlush(Stream *gsmSerial) {
     char t = gsmSerial->read();
     // Serial.write(t);
   }
+}
+    
+boolean ElementzGSMshield::checkNetworkStatus() {
+//    SendAT("AT+CREG?");
+  boolean status = SendAT("AT+CREG?", "OK", 1000, 1, 1 );
+  Serial.print("checkNetworkStatus:::");
+  Serial.println(status);
+  return status;
+}
+
+boolean ElementzGSMshield::  enableCallerInfo() {
+//  AT+CLIP=1
+boolean status = SendAT("AT+CLIP=1", "OK", 1000, 1, 1 );
+Serial.print("enableCallerInfo: ");
+Serial.println(status);
+
+
+return status;
 }
 
 boolean ElementzGSMshield::checkForExptReplyinRcvdString(String recvdString, const char* exptReply)
@@ -250,11 +268,6 @@ boolean ElementzGSMshield::sendSMSinPDUformat(void)
   return status;
 }
 
-boolean ElementzGSMshield::  enableCallerInfo() {
-//  AT+CLIP=1
-boolean status = SendAT("AT+IPR=9600", "OK", 1000, 1, 1 );
-return status;
-}
 
 
 boolean ElementzGSMshield::sendSms(const char* phone_number, const char* Content)
