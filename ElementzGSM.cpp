@@ -21,7 +21,16 @@ static void serialFlush(Stream *gsmSerial) {
     // Serial.write(t);
   }
 }
-    
+
+void ElementzGSMshield::setAutoAnswer(int num) {
+  String cmd = "ATS0=";
+  String cmd2 = cmd+num;
+   boolean status = SendAT(cmd2, "OK", 1000, 1, 1 );
+  Serial.print("setAutoAnswer :::");
+  Serial.println(status);
+  
+}
+
 boolean ElementzGSMshield::checkNetworkStatus() {
 //    SendAT("AT+CREG?");
   boolean status = SendAT("AT+CREG?", "OK", 1000, 1, 1 );
