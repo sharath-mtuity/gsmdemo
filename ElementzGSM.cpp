@@ -13,6 +13,7 @@ void ElementzGSMshield::begin(long baudRate)
 {
   gsmSerial -> begin(baudRate);
   EchoOFF();
+  
 }
 
 static void serialFlush(Stream *gsmSerial) {

@@ -7,7 +7,7 @@
 //#define PinRX 2
 //#define PinTX 3
 
-#define DEBUG 1
+#define DEBUG 0
 
 #define LOCAL		0
 #define SDCARD		1
