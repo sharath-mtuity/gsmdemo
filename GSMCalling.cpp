@@ -6,7 +6,7 @@
 static void serialFlush(Stream *gsmSerial) {
   while (gsmSerial->available() > 0) {
     char t = gsmSerial->read();
-    // Serial.write(t);
+    // Serial.write(t);makeCall
   }
 }
 
