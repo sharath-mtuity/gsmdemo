@@ -24,6 +24,7 @@ void setup() {
   if (!isStarted) {
     isStarted = true;
     //  serialOut.begin(BAUD_RATE);
+//    serialOut.begin(9600);
     GSM.begin(9600);
     pinMode(START_BUTTON_PIN, INPUT);
 
@@ -39,7 +40,7 @@ void setup() {
     }
     GSM.setAutoAnswer(AUTO_ANSWER_DURATION);
     delay(2000);
-    Serial.print(F("serial available"));
+    Serial.println(F("serial available"));
   } else {
     Serial.println(F("****** AUTO RESTARTED *******"));
   }
@@ -49,26 +50,42 @@ void setup() {
 }
 
 void loop() {
+  String reply = "";
+//  #if (DEBUG == 1)
+//  if (!reply.equals(" \n")) {
+     Serial.println(reply);
+//  }
+//  #endif
+  
+   /* while(serialOut.available()) {
+      Serial.println(GSM.readReply(1000, 1));
+    }
+*/
+    if(Serial.available()) {
+      GSM.SendAT(Serial.readString());
+//      serialOut.write(Serial.read());
+    }
 
   if (isCallInitiated == false && digitalRead(START_BUTTON_PIN) == false ) {
     Serial.print(F("Call initiated"));
     isCallInitiated = true;
     GSM.makeCall(phone_number);
-
   }
-  String reply = GSM.readReply(1000,1);
-  if(reply.indexOf("RING") > 0){
+  reply = GSM.readReply(1000, 1);
+  if (reply.indexOf("RING") > 0) {
     // incoming call, call shouldnt be initiated
-          isCallInitiated = false;
+    isCallInitiated = false;
+    Serial.print(F("Ringinggg.... "));
 
   }
 
-  
+
   if (isCallInitiated == true) {
-    String reply = GSM.readReply(1000,1);
-    if(reply.indexOf("NO CARRIER") > 0){
+//    String reply = GSM.readReply(1000, 1);
+    reply = GSM.readReply(1000, 1);
+    if (reply.indexOf("NO CARRIER") > 0) {
       //call disconnected
-         Serial.print(F("call disconnected "));
+      Serial.print(F("call disconnected "));
       isCallInitiated = false;
     }
   }
@@ -76,13 +93,15 @@ void loop() {
   delay(250);
   digitalWrite(pin_LED, LOW);
   delay(250);
-  
-  if (serialOut.available()) {
-    Serial.write(serialOut.read());
-  }
-  while (Serial.available())
+
+
+ /* if (Serial.available())
   {
-    serialOut.write(Serial.read());
-  }
-  serialOut.println();
+      Serial.println(F("to gsm"));
+    while(Serial.available()) {
+      serialOut.write(Serial.read());
+    }
+    Serial.println(F("to gsm end"));
+  } */
+
 }
