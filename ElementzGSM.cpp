@@ -12,8 +12,9 @@ ElementzGSMshield::ElementzGSMshield (SoftwareSerial *serialInput)
 void ElementzGSMshield::begin(long baudRate)
 {
   gsmSerial -> begin(baudRate);
-  EchoOFF();
-  
+  //  EchoOFF();
+  EchoON();
+
 }
 
 static void serialFlush(Stream *gsmSerial) {
@@ -25,15 +26,15 @@ static void serialFlush(Stream *gsmSerial) {
 
 void ElementzGSMshield::setAutoAnswer(int num) {
   String cmd = "ATS0=";
-  String cmd2 = cmd+num;
-   boolean status = SendAT(cmd2, "OK", 1000, 1, 1 );
+  String cmd2 = cmd + num;
+  boolean status = SendAT(cmd2, "OK", 1000, 1, 1 );
   Serial.print("setAutoAnswer :::");
   Serial.println(status);
-  
+
 }
 
 boolean ElementzGSMshield::checkNetworkStatus() {
-//    SendAT("AT+CREG?");
+  //    SendAT("AT+CREG?");
   boolean status = SendAT("AT+CREG?", "OK", 1000, 1, 1 );
   Serial.print("checkNetworkStatus:::");
   Serial.println(status);
@@ -41,13 +42,13 @@ boolean ElementzGSMshield::checkNetworkStatus() {
 }
 
 boolean ElementzGSMshield::  enableCallerInfo() {
-//  AT+CLIP=1
-boolean status = SendAT("AT+CLIP=1", "OK", 1000, 1, 1 );
-Serial.print("enableCallerInfo: ");
-Serial.println(status);
+  //  AT+CLIP=1
+  boolean status = SendAT("AT+CLIP=1", "OK", 1000, 1, 1 );
+  Serial.print("enableCallerInfo: ");
+  Serial.println(status);
 
 
-return status;
+  return status;
 }
 
 boolean ElementzGSMshield::checkForExptReplyinRcvdString(String recvdString, const char* exptReply)
@@ -289,9 +290,9 @@ boolean ElementzGSMshield::sendSms(const char* phone_number, const char* Content
   if (status == true) {
     SMSsenderString = "";
     mySerial->print(Content);
- #if (DEBUG == 1)
+#if (DEBUG == 1)
     Serial.println(Content);
-#endif  
+#endif
     mySerial->write(0x1A);
     SMSsenderString = readReply(120000, 1);
 #if (DEBUG == 1)
@@ -318,9 +319,9 @@ boolean ElementzGSMshield::sendSms(String phone_number, String Content)
   if (status == true) {
     SMSsenderString = "";
     mySerial->print(Content);
- #if (DEBUG == 1)
+#if (DEBUG == 1)
     Serial.println(Content);
-#endif   
+#endif
     mySerial->write(0x1A);
     SMSsenderString = readReply(120000, 1);
 #if (DEBUG == 1)
@@ -586,8 +587,8 @@ String ElementzGSMshield::getProcessedGNSSInfo(void)
 {
   SendAT("AT+CGNSINF");
   String infoString = readReply(5000, 1);
-  infoString.replace("\r\n+CGNSINF: ","");
-  infoString.replace("\r","");
+  infoString.replace("\r\n+CGNSINF: ", "");
+  infoString.replace("\r", "");
   return infoString;
 }
 

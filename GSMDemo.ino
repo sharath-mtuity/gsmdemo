@@ -18,28 +18,28 @@ bool isCallInitiated = false;   //to check wheather user initiated the call by c
 
 void setup() {
   Serial.begin(BAUD_RATE);
-
   Serial.print(F("isStarted: "));
   Serial.println((isStarted));
   if (!isStarted) {
     isStarted = true;
-    //  serialOut.begin(BAUD_RATE);
-//    serialOut.begin(9600);
     GSM.begin(9600);
     pinMode(START_BUTTON_PIN, INPUT);
 
     boolean status = GSM.enableCallerInfo();
     delay(2000);
-    bool networkstatus = GSM.checkNetworkStatus();
+  
+    /*
+     * bool networkstatus = GSM.checkNetworkStatus();
     delay(2000);
 
     if ( networkstatus == false) {
-      Serial.println(F("Some issue with mobile carrier,plese check the sim and try again"));
+      //      Serial.println(F("Some issue with mobile carrier,plese check the sim and try again"));
     }
     else {
-    }
+    }*/
+    
     GSM.setAutoAnswer(AUTO_ANSWER_DURATION);
-    delay(2000);
+    delay(1000);
     Serial.println(F("serial available"));
   } else {
     Serial.println(F("****** AUTO RESTARTED *******"));
@@ -51,20 +51,21 @@ void setup() {
 
 void loop() {
   String reply = "";
-//  #if (DEBUG == 1)
-//  if (!reply.equals(" \n")) {
-     Serial.println(reply);
-//  }
-//  #endif
-  
-   /* while(serialOut.available()) {
-      Serial.println(GSM.readReply(1000, 1));
+  //  #if (DEBUG == 1)
+  //  if (!reply.equals(" \n")) {
+  //  }
+  //  #endif
+
+  /* while(serialOut.available()) {
+     Serial.println(GSM.readReply(1000, 1));
     }
-*/
-    if(Serial.available()) {
-      GSM.SendAT(Serial.readString());
-//      serialOut.write(Serial.read());
-    }
+  */
+//  Serial.print(F("Flag:"));
+//  Serial.println(digitalRead(START_BUTTON_PIN));
+  if (Serial.available()) {
+    GSM.SendAT(Serial.readString());
+    //      serialOut.write(Serial.read());
+  }
 
   if (isCallInitiated == false && digitalRead(START_BUTTON_PIN) == false ) {
     Serial.print(F("Call initiated"));
@@ -72,36 +73,49 @@ void loop() {
     GSM.makeCall(phone_number);
   }
   reply = GSM.readReply(1000, 1);
-  if (reply.indexOf("RING") > 0) {
+  //  Serial.println(F("Call not initiated yet"));
+
+  Serial.println(reply);
+  Serial.print("IS CALL INITIATED::");
+  Serial.println(isCallInitiated);
+  
+
+  if ((reply.indexOf("RING") > 0)  || (reply.indexOf("CLIP") > 0)) {
     // incoming call, call shouldnt be initiated
     isCallInitiated = false;
-    Serial.print(F("Ringinggg.... "));
+    Serial.print("Ringinggg.... ");
 
   }
 
 
-  if (isCallInitiated == true) {
-//    String reply = GSM.readReply(1000, 1);
+//  if (isCallInitiated == true) {
+    //    String reply = GSM.readReply(1000, 1);
     reply = GSM.readReply(1000, 1);
+//    Serial.println("Call initiated::::");
+
+//    Serial.println(reply);
+//    Serial.print(F("Bool check:"));
+//    Serial.println(reply.indexOf("NO CARRIER") > 0);
+    
     if (reply.indexOf("NO CARRIER") > 0) {
       //call disconnected
       Serial.print(F("call disconnected "));
       isCallInitiated = false;
     }
-  }
+//  }
   digitalWrite(pin_LED, HIGH);
   delay(250);
   digitalWrite(pin_LED, LOW);
   delay(250);
 
 
- /* if (Serial.available())
-  {
-      Serial.println(F("to gsm"));
-    while(Serial.available()) {
-      serialOut.write(Serial.read());
-    }
-    Serial.println(F("to gsm end"));
-  } */
+  /* if (Serial.available())
+    {
+       Serial.println(F("to gsm"));
+     while(Serial.available()) {
+       serialOut.write(Serial.read());
+     }
+     Serial.println(F("to gsm end"));
+    } */
 
 }
